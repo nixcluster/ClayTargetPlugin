@@ -1,8 +1,6 @@
 package ctmain;
 
 
-
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -15,16 +13,25 @@ import org.bukkit.block.Block;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class ClayTargetPlugin extends JavaPlugin {
+	public static boolean toggle = true;
 	public static List<Location> Locations = new ArrayList<Location>();
 	@SuppressWarnings("unchecked")
+	@Override
 	public void onEnable() {
-	Bukkit.getPluginManager().registerEvents(new EventListener(this), this);
+		Bukkit.getPluginManager().registerEvents(new EventListener(this), this);
+if (getConfig() == null) {
+	this.saveDefaultConfig();
+}
+	if (getConfig().getList("Location") != null ) {
 	Locations = (List<Location>) getConfig().getList("Location");	
 	getLogger().info("Plugin has been Sucessfully Enabled");
+	}else {
+	getLogger().info("Plugin has been Sucessfully Enabled For the First Time");
+	getConfig().options().copyDefaults(true);
+	}
 	}
 	
 	@Override
@@ -38,29 +45,37 @@ public class ClayTargetPlugin extends JavaPlugin {
 		if (cmd.getName().equalsIgnoreCase("ctpregister") && sender instanceof Player){
 			Player player = (Player) sender;
 			Block block = player.getTargetBlock((Set<Material>) null, 100);
+			if ( player.hasPermission("ctpperms")) {
 			if (block.getType().equals(Material.DISPENSER )) {
+				if(Locations.contains(block.getLocation())) {
+					sender.sendMessage("Already Registered");
+					return true;
+				}
 	Locations.add(block.getLocation());
-				Bukkit.broadcastMessage("Dispenser Set. Use /ctpunregister to unregister it");
-				System.out.println(Locations.toString());
+	sender.sendMessage("Dispenser Set. Use /ctpunregister to unregister it");
 				return true;
-			}else {Bukkit.broadcastMessage("Block Is Not a Dispenser");}
+			}else {sender.sendMessage("Block Is Not a Dispenser");}
 				return true;
+			}else {player.sendMessage("You do not have Permission to run this Commands");}
 				
 		
 		}
 		else if (cmd.getName().equalsIgnoreCase("ctpunregister") && sender instanceof Player) {
 			Player player = (Player) sender;
 			Block block = player.getTargetBlock((Set<Material>) null, 100);
+			if ( player.hasPermission("ctpperms")) {
+				if (Locations.contains(block.getLocation())) {
 			if (block.getType().equals(Material.DISPENSER )) {
 				Locations.remove(block.getLocation());
-					Bukkit.broadcastMessage("Dispenser Unregistered");
-				
-				}
-			else {Bukkit.broadcastMessage("Block Is Not a Dispenser");}
-		 
-			System.out.println(block.getType());
+				sender.sendMessage("Dispenser Unregistered");
 				return true;
-			
+				}
+			else {sender.sendMessage("Block Is Not a Dispenser");}
+		 
+				return true;
+				}else {sender.sendMessage("This Block Isnt Registered");
+				return true;}
+			}else {player.sendMessage("You do not have Permission to run this Commands");}
 
 		}
 		else if (cmd.getName().equalsIgnoreCase("ctpscore") && sender instanceof Player) {
@@ -70,23 +85,41 @@ public class ClayTargetPlugin extends JavaPlugin {
 			}else {
 			for ( UUID key : EventListener.test.keySet() ) {
 				Player player = Bukkit.getPlayer(key);
-				Bukkit.broadcastMessage(player.getDisplayName() + ": " + EventListener.test.get(key)) ;;
+				sender.sendMessage(player.getDisplayName() + ": " + EventListener.test.get(key)) ;;
 			}
 			return true;
 			}
-				
+		}
 			
-			}
 		else if (cmd.getName().equalsIgnoreCase("ctpscorereset") && sender instanceof Player) {
-
+			Player player = (Player) sender;
+			if ( player.hasPermission("ctpperms")) {
 		EventListener.test.clear();
-		Bukkit.broadcastMessage("Scores Cleared");
+		sender.sendMessage("Scores Cleared");
+		
 		return true;
 		
+		}else {player.sendMessage("You do not have Permission to run this Commands");}
+		
+		}else if (cmd.getName().equalsIgnoreCase("ctptoggle") && sender instanceof Player) {
+	
+			
+			if (toggle == true) {
+				toggle = false;
+				sender.sendMessage("Toggle is now false");
+				return true;
+			}else if (toggle == false) { 
+				toggle = true; 
+				sender.sendMessage("Toggle is now True");
+				return true;
+				}
+			
 		}
+		
 		return false;
 		}
-	}
+	
+}
 		
 	
 

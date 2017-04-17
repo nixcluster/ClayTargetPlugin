@@ -17,3 +17,8 @@ commands:
    ctpscorereset:
       description: Resets scores of people that have hit
       usage: /<ctpscorereset>
+      
+   ctptoggle:
+      description: Toggles the plugin on and off
+      usage: /<ctptoggle>
+      

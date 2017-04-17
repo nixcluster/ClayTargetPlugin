@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -34,10 +33,10 @@ public int blockcount;
 public int TaskID;
 public int counter = 0;
 List<String> array = new ArrayList<String>();
-
 @SuppressWarnings("deprecation")
 @EventHandler
 public void onDispense(BlockDispenseEvent e){
+	if ( ClayTargetPlugin.toggle == true) {
 	if ( ClayTargetPlugin.Locations.contains(e.getBlock().getLocation())) {
 e.setCancelled(true);
 	String something = new String(e.getBlock().getState().getData().toString());
@@ -95,8 +94,9 @@ e.setCancelled(true);
 		block.setDropItem(false);
 		block.setVelocity(vector.normalize().multiply(1.5));	
 	}else {}
-}
 
+}else {}
+}
 @EventHandler
 public void onGround(EntityChangeBlockEvent event) { 
 	if (event.getEntity() instanceof FallingBlock) {
@@ -112,6 +112,7 @@ public void onGround(EntityChangeBlockEvent event) {
 
 @EventHandler
 public void onArrowland(ProjectileHitEvent e)  {
+	if ( ClayTargetPlugin.toggle == true) {
 		if (e.getEntity().getShooter() instanceof Player) {
 			Entity ent = e.getHitEntity();
 		Player player = (Player) e.getEntity().getShooter();
@@ -126,11 +127,23 @@ public void onArrowland(ProjectileHitEvent e)  {
 			} else{
 				test.put(Pid, 1);
 		}
-			Bukkit.broadcastMessage("Good Shot " + player.getDisplayName() + " Your Score is Now " + test.get(Pid));
-				ent.setGlowing(false);
+				
+					List<Entity> players = new ArrayList<Entity>();
+					players = e.getEntity().getNearbyEntities(100, 100, 100);
+					if ( players.size() > 1 ) {
+					for(Entity i : players) {
+						if(i instanceof Player)
+					i.sendMessage("Good Shot " + player.getDisplayName() + " Your Score is Now " + test.get(Pid));
+								}
+					}
+					if (players.size() == 1) {
+						player.sendMessage("Good Shot " + player.getDisplayName() + " Your Score is Now " + test.get(Pid));
+					}else {}
+			ent.setGlowing(false);
 				ent.getWorld().createExplosion(ent.getLocation(), 2);
 				ent.remove();
 
+		}
 		}
 		}
 	
