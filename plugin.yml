@@ -1,0 +1,24 @@
+name: ClayTargetPlugin
+main: ctmain.ClayTargetPlugin
+version: 1.0
+commands:
+   ctpregister:
+      description: Registers the Dispeser as a Clay Target Launcher
+      usage: /<ctpregister>
+  
+   ctpunregister:
+      description: Unregisters the Clay Target Launcher back to a normal Dispenser
+      usage: /<ctpunregister>
+      
+   ctpscore:
+      description: View Scores of Players That have hit targets
+      usage: /<ctpscore>
+      
+   ctpscorereset:
+      description: Resets scores of people that have hit
+      usage: /<ctpscorereset>
+      
+   ctptoggle:
+      description: Toggles the plugin on and off
+      usage: /<ctptoggle>
+      
