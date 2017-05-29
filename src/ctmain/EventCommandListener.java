@@ -1,17 +1,13 @@
 package ctmain;
 
-
-
-
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
-
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -28,6 +24,8 @@ import org.bukkit.event.block.BlockDispenseEvent;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.util.Vector;
+
+
 public class EventCommandListener implements Listener, CommandExecutor {
 	
 	private HashMap <UUID, Integer> test = new  HashMap <UUID, Integer>();
@@ -145,13 +143,13 @@ public class EventCommandListener implements Listener, CommandExecutor {
 							if ( players.size() > 1 ) {
 								for(Entity i : players) {
 									if(i instanceof Player)
-										i.sendMessage("Good Shot " + player.getDisplayName() + " Your Score is Now " + test.get(Pid));
+										i.sendMessage(ChatColor.GREEN + "Good Shot! " + player.getDisplayName() + " Your score is now " + ChatColor.GOLD + test.get(Pid));
 								}
 							}
 							if (players.size() == 1) {
-								player.sendMessage("Good Shot " + player.getDisplayName() + " Your Score is Now " + test.get(Pid));
+								player.sendMessage(ChatColor.GREEN + "Good Shot! " + player.getDisplayName() + " Your score is now: " + ChatColor.GOLD + test.get(Pid));
 							}
-						ent.setGlowing(false);
+							ent.setGlowing(false);
 							ent.getWorld().createExplosion(ent.getLocation(), 2);
 							ent.remove();
 			
@@ -169,16 +167,16 @@ public class EventCommandListener implements Listener, CommandExecutor {
 			if (player.hasPermission("ctpperms")) {
 			if (block.getType().equals(Material.DISPENSER )) {
 				if(Locations.contains(block.getLocation())) {
-					sender.sendMessage("Already Registered");
+					sender.sendMessage(ChatColor.RED + "Already Registered");
 					return true;
 				}
 				Locations.add(block.getLocation());
-				sender.sendMessage("Dispenser Set. Use /ctpunregister to unregister it");
+				sender.sendMessage(ChatColor.GREEN + "Dispenser Set. Use /ctpunregister to unregister it");
 				ClayTargetPlugin.listener.Locations = Locations;
 				return true;
-			}else{ sender.sendMessage("Block Is Not a Dispenser"); }
+			}else{ sender.sendMessage(ChatColor.RED + "Block Is Not a Dispenser"); }
 				return true;
-			}else{ player.sendMessage("You do not have Permission to run this Commands"); }
+			}else{ player.sendMessage(ChatColor.RED + "You do not have Permission to run this Commands"); }
 				
 		
 		}else if (cmd.getName().equalsIgnoreCase("ctpunregister") && sender instanceof Player) {
@@ -188,25 +186,25 @@ public class EventCommandListener implements Listener, CommandExecutor {
 				if (Locations.contains(block.getLocation())) {
 					if (block.getType().equals(Material.DISPENSER )) {
 						Locations.remove(block.getLocation());
-						sender.sendMessage("Dispenser Unregistered");
+						sender.sendMessage(ChatColor.GREEN + "Dispenser Unregistered");
 						ClayTargetPlugin.listener.Locations = Locations;
 						return true;
-					}else{ sender.sendMessage("Block Is Not a Dispenser"); }
+					}else{ sender.sendMessage(ChatColor.RED + "Block Is Not a Dispenser"); }
 		 
 					return true;
 				}else{
-					sender.sendMessage("This Block Isnt Registered");
+					sender.sendMessage(ChatColor.RED + "This Block Isnt Registered");
 					return true;
 				}
-			}else{ player.sendMessage("You do not have Permission to run this Commands"); }
+			}else{ player.sendMessage(ChatColor.RED + "You do not have Permission to run this Commands"); }
 		}else if (cmd.getName().equalsIgnoreCase("ctpscore") && sender instanceof Player) {
 			if (test.isEmpty()) {
-				Bukkit.broadcastMessage("Nobody Has Scored yet");
+				sender.sendMessage(ChatColor.DARK_GREEN + "Nobody Has Scored yet");
 				return true;	
 			}else{
 				for (UUID key : test.keySet() ) {
 					Player player = Bukkit.getPlayer(key);
-					sender.sendMessage(player.getDisplayName() + ": " + test.get(key)) ;;
+					sender.sendMessage(ChatColor.DARK_GREEN + player.getDisplayName() + ": " + ChatColor.WHITE + test.get(key)) ;;
 				}
 				return true;
 			}
@@ -214,18 +212,18 @@ public class EventCommandListener implements Listener, CommandExecutor {
 			Player player = (Player) sender;
 			if (player.hasPermission("ctpperms")) {
 				test.clear();
-				sender.sendMessage("Scores Cleared");
+				sender.sendMessage(ChatColor.GREEN + "Scores Cleared");
 				
 				return true;
-			}else{ player.sendMessage("You do not have Permission to run this Commands"); }
+			}else{ player.sendMessage(ChatColor.RED + "You do not have Permission to run this Commands"); }
 		}else if (cmd.getName().equalsIgnoreCase("ctptoggle") && sender instanceof Player) {
 			if (toggle == true) {
 				toggle = false;
-				sender.sendMessage("Toggle is now false");
+				sender.sendMessage(ChatColor.DARK_RED + "Toggle is now false");
 				return true;
 			}else if (toggle == false) { 
 				toggle = true; 
-				sender.sendMessage("Toggle is now True");
+				sender.sendMessage(ChatColor.DARK_GREEN + "Toggle is now True");
 				return true;
 			}
 		}
