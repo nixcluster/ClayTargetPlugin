@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -20,6 +21,7 @@ import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDispenseEvent;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
@@ -103,9 +105,23 @@ public class EventCommandListener implements Listener, CommandExecutor {
 					vector = newpos.getDirection();
 					block.setGlowing(true);
 					block.setDropItem(false);
-					block.setVelocity(vector.normalize().multiply(1.5));	
+					Vector v = vector.normalize().multiply(1);
+					block.setVelocity(v.setY(v.getY() * 1.5));
+					
 			}
 		
+		}
+	}
+	
+	@EventHandler
+	public void onBlockBreak(BlockBreakEvent event) {
+		if(event.getBlock().getType() ==  Material.DISPENSER) {
+			Block block = event.getBlock();
+			if(Locations.contains(block.getLocation())) {
+				Locations.remove(block.getLocation());
+				event.getPlayer().sendMessage(ChatColor.GREEN + "Dispenser Unregistered");
+				ClayTargetPlugin.listener.Locations = Locations;
+			}
 		}
 	}
 	
@@ -150,7 +166,7 @@ public class EventCommandListener implements Listener, CommandExecutor {
 								player.sendMessage(ChatColor.GREEN + "Good Shot! " + player.getDisplayName() + " Your score is now: " + ChatColor.GOLD + test.get(Pid));
 							}
 							ent.setGlowing(false);
-							ent.getWorld().createExplosion(ent.getLocation(), 2);
+							ent.getWorld().createExplosion(ent.getLocation().getX(), ent.getLocation().getY(), ent.getLocation().getZ(), 2, false, false);
 							ent.remove();
 			
 					}
